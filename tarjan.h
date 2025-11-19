@@ -27,7 +27,7 @@ typedef struct {
 
 t_partition algorithmeDeTarjan(ListeAdjacence *graphe);
 void afficherPartition(t_partition *partition);
-
+void parcours(int , int , int *, t_tarjan_vertex *,int *, t_partition *, ListeAdjacence *);
 #endif
 
 
