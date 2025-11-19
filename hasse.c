@@ -66,13 +66,15 @@ void afficher_hasse(t_link_array *r) {
 void afficher_caracteristiques(t_partition *p, t_link_array *r) {
     printf("\n--- Caracteristiques ---\n");
 
-    if (p->nb_classes == 1) printf("Graphe IRREDUCTIBLE.\n");
-    else printf("Graphe NON irreductible.\n");
+    if (p->nb_classes == 1) printf("Graphe irreductible.\n");
+    else printf("Graphe non irreductible.\n");
 
     int *transitoire = (int*)malloc(p->nb_classes * sizeof(int));
     int i, k;
 
-    for (i = 0; i < p->nb_classes; i++) transitoire[i] = 0;
+    for (i = 0; i < p->nb_classes; i++) {
+        transitoire[i] = 0;
+    }
 
 
     for (k = 0; k < r->log_size; k++) {

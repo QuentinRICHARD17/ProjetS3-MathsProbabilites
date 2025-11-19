@@ -10,6 +10,8 @@ void parcours(int sommet_actuel, int *pile, int *ptr_pile, t_tarjan_vertex *info
     int v;
     Cellule *voisin;
     infos[sommet_actuel].num = *compteur;
+
+
     infos[sommet_actuel].num_accessible = *compteur;
     (*compteur)++;
     pile[*ptr_pile] = sommet_actuel;
