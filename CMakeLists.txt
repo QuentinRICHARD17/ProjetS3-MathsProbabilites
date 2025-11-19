@@ -10,5 +10,7 @@ add_executable(TI_301_PJT
         tarjan.c
         tarjan.h
         hasse.h
-        hasse.c)
+        hasse.c
+        matrix.c
+        matrix.h)
 
