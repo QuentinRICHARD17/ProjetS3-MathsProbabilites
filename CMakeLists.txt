@@ -8,5 +8,7 @@ add_executable(TI_301_PJT
         graph.c
         graph.h
         tarjan.c
-        tarjan.h)
+        tarjan.h
+        hasse.h
+        hasse.c)
 
