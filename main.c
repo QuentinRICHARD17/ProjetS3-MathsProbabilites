@@ -141,5 +141,5 @@ int main() {
     // free(partition.classes);
     // if(reseau_hasse.links)
     //     free(reseau_hasse.links);
-    // return 0;
+    return 0;
 }
