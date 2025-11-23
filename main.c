@@ -28,7 +28,6 @@ int main() {
     #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
     #endif
-
     //Pour créer le fichier de sortie dans le dossier parent (../)
     const char *fichier_mermaid = "../graph_output.txt";
     int choix = 0;
