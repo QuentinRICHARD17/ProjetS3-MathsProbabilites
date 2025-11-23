@@ -111,4 +111,64 @@ t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index) {
     }
 
     return res;
+
+}
+
+int pgcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int pgcd_array(int *vals, int nbvals) {
+    if (nbvals == 0) return 0;
+    int result = vals[0];
+    for (int i = 1; i < nbvals; i++) {
+        result = pgcd(result, vals[i]);
+    }
+    return result;
+}
+
+int getPeriod(t_matrix sub_matrix) {
+    int n = sub_matrix.lignes;
+    int *periods = (int*)malloc(n * sizeof(int));
+    if (!periods) return 0;
+
+    int period_count = 0;
+
+    t_matrix power_matrix = creer_matrice(n, n);
+    t_matrix result_matrix = creer_matrice(n, n);
+
+    copier_matrice(&power_matrix, sub_matrix);
+
+    for (int cpt = 1; cpt <= n; cpt++) {
+        int diag_nonzero = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (power_matrix.data[i][i] > 0.00001f) {
+                diag_nonzero = 1;
+                break;
+            }
+        }
+
+        if (diag_nonzero) {
+            periods[period_count] = cpt;
+            period_count++;
+        }
+
+        t_matrix temp = multiplier_matrices(power_matrix, sub_matrix);
+        copier_matrice(&power_matrix, temp);
+        liberer_matrice(temp);
+    }
+
+    int period = pgcd_array(periods, period_count);
+
+    free(periods);
+    liberer_matrice(power_matrix);
+    liberer_matrice(result_matrix);
+
+    return period;
 }

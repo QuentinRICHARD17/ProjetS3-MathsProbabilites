@@ -18,5 +18,6 @@ float difference_matrices(t_matrix m1, t_matrix m2);
 void liberer_matrice(t_matrix m);
 
 t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index);
+int getPeriod(t_matrix sub_matrix);
 
 #endif
