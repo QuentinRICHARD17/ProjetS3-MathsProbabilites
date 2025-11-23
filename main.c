@@ -25,16 +25,67 @@ int main() {
     // Cela force le programme à utiliser le POINT (.) pour les décimales
 
     // 2. FORCER le terminal Windows à afficher en UTF-8 (page de code 65001)
-#ifdef _WIN32
+    #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
-#endif
-
-
-    // pour remonter d'un dossier (../) pour trouver "data/exemple1.txt"
-    const char *fichier_graphe = "../data/exemple_valid_step3.txt";
+    #endif
 
     //Pour créer le fichier de sortie dans le dossier parent (../)
     const char *fichier_mermaid = "../graph_output.txt";
+    int choix = 0;
+    char *fichier_graphe;
+
+    do {
+        printf("== Choix du fichier == \n");
+        printf("Vous pouvez choisir parmis cette liste de fichier le numero associe.\n");
+        printf("  1. exemple1.txt\n");
+        printf("  2. exemple1_chatGPT_fixed\n");
+        printf("  3. exemple1_from_chatGPT.txt\n");
+        printf("  4. exemple2.txt\n");
+        printf("  5. exemple3.txt\n");
+        printf("  6. exemple4_2check.txt\n");
+        printf("  7. exemple_hasse1.txt\n");
+        printf("  8. exemple_scc1.txt\n");
+        printf("  9. exemple_valid_step3.txt\n");
+        printf("\n  0. Quitter\n");
+        printf("Votre choix : ");
+
+        scanf("%d", &choix);
+
+        if (choix < 0 || choix > 10) printf("erreur vous n'avez pas saisi un nombre conforme !!!\n");
+
+    }while (choix < 0 || choix > 10);
+
+        switch (choix) {
+            case 1:
+                fichier_graphe = "../data/exemple1.txt";
+            break;
+            case 2:
+                fichier_graphe = "../data/exemple1_chatGPT_fixed.txt";
+            break;
+            case 3:
+                fichier_graphe = "../data/exemple1_from_chatGPT.txt";
+            break;
+            case 4:
+                fichier_graphe = "../data/exemple2.txt";
+            break;
+            case 5:
+                fichier_graphe = "../data/exemple3.txt";
+            break;
+            case 6:
+                fichier_graphe = "../data/exemple4_2check.txt";
+            break;
+            case 7:
+                fichier_graphe = "../data/exemple_hasse1.txt";
+            break;
+            case 8:
+                fichier_graphe = "../data/exemple_scc1.txt";
+            break;
+            case 9:
+                fichier_graphe = "../data/exemple_valid_step3.txt";
+            break;
+            case 0:
+                return 0;
+        }
 
     printf("=== LECTURE DU GRAPHE ===\n");
     printf("Fichier : %s\n", fichier_graphe);
