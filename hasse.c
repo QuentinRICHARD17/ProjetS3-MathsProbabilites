@@ -54,13 +54,20 @@ t_link_array creer_reseau_hasse(ListeAdjacence *g, t_partition *p) {
 }
 
 void afficher_hasse(t_link_array *r) {
-    printf("\n--- Diagramme de Hasse ---\n");
-    if (r->log_size == 0) printf("Aucun lien.\n");
+    printf("\n--- Diagramme de Hasse (Format Mermaid) ---\n");
+    printf("Copiez-collez ceci dans https://mermaid.live/ :\n\n");
+    printf("flowchart TD\n"); // Début du graphe Mermaid
+
+    if (r->log_size == 0) {
+        printf("    %% Aucun lien inter-classes\n");
+    }
 
     int i;
     for (i = 0; i < r->log_size; i++) {
-        printf("C%d -> C%d\n", r->links[i].from + 1, r->links[i].to + 1);
+        // Format : C1 --> C2
+        printf("    C%d --> C%d\n", r->links[i].from + 1, r->links[i].to + 1);
     }
+    printf("\n-------------------------------------------\n");
 }
 
 void afficher_caracteristiques(t_partition *p, t_link_array *r) {
