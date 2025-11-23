@@ -29,6 +29,5 @@ void afficher_hasse(t_link_array *r);
 //Affiche les propriétés (Transitoire, Persistante, Absorbant)
 void afficher_caracteristiques(t_partition *p, t_link_array *r);
 //Supprime les liens transitifs (Option du barème) : si A->B et B->C, on supprime A->C
-void removeTransitiveLinks(t_link_array *p_link_array);
 
 #endif
