@@ -68,78 +68,78 @@ int main() {
 
 
     // Code exécution Partie 3
-
-    printf("\n=== PARTIE 3 : CALCULS MATRICIELS & PROPRIETES ===\n");
-
-    t_matrix M_globale = graphe_vers_matrice(graphe);
-    //printf("Matrice de transition M (globale) :\n");    //enlever les // pour voir la matrice en 10x10
-    // afficher_matrice(M_globale);
-
-    int *est_transitoire = (int*)calloc(partition.nb_classes, sizeof(int));
-    for (int k = 0; k < reseau_hasse.log_size; k++) {
-        est_transitoire[reseau_hasse.links[k].from] = 1;
-    }
-    printf("\n--- Analyse des Distributions Stationnaires par Classe ---\n");
-
-    // Boucle sur chaque classe de la partition
-    for (int i = 0; i < partition.nb_classes; i++) {
-        printf("\n>> Classe C%d : ", i + 1);
-        if (est_transitoire[i]) {
-            printf("TRANSITOIRE.\n");
-            printf("   -> La probabilité limite tend vers 0.\n");
-        }
-        else {
-            printf("PERSISTANTE.\n");
-
-            //Etape 2
-            t_matrix M_sub = subMatrix(M_globale, partition, i);
-            t_matrix M_prev = creer_matrice(M_sub.lignes, M_sub.cols);
-            copier_matrice(&M_prev, M_sub);
-            t_matrix M_curr;
-
-            float diff = 1.0;
-            float epsilon = 0.0001; // Seuil de convergence
-            int iter = 0;
-            int max_iter = 1000; // Limite pour éviter boucle infinie
-            int convergence_atteinte = 0;
-
-            while (iter < max_iter) {
-                M_curr = multiplier_matrices(M_prev, M_sub);
-                diff = difference_matrices(M_curr, M_prev);
-
-                liberer_matrice(M_prev);
-                M_prev = M_curr;
-                iter++;
-
-                if (diff < epsilon) {
-                    convergence_atteinte = 1;
-                    break;
-                }
-            }
-            if (convergence_atteinte) {
-                printf("   -> Convergence atteinte en %d iterations (diff = %f).\n", iter, diff);
-                printf("   -> Matrice stationnaire de la classe :\n");
-                afficher_matrice(M_prev);}
-            else {
-                //Etape 3
-                printf("   -> Pas de convergence simple (Diff = %f apres %d iters).\n", diff, max_iter);
-                printf("   -> Analyse de PERIODICITE (Bonus)...\n");
-                int periode = getPeriod(M_sub);
-
-                if (periode > 1) {
-                    printf("   -> La classe est PERIODIQUE de periode d = %d.\n", periode);
-                    printf("   -> Pas de distribution limite unique, mais une distribution cyclique.\n");
-                } else {
-                    printf("   -> Convergence complexe ou très lente.\n");}
-            }
-            liberer_matrice(M_sub);
-            liberer_matrice(M_prev);
-        }
-    }
-    free(est_transitoire);
-    liberer_matrice(M_globale);
-    free(partition.classes);
-    if(reseau_hasse.links)
-        free(reseau_hasse.links);
-    return 0;
+    //
+    // printf("\n=== PARTIE 3 : CALCULS MATRICIELS & PROPRIETES ===\n");
+    //
+    // t_matrix M_globale = graphe_vers_matrice(graphe);
+    // //printf("Matrice de transition M (globale) :\n");    //enlever les // pour voir la matrice en 10x10
+    // // afficher_matrice(M_globale);
+    //
+    // int *est_transitoire = (int*)calloc(partition.nb_classes, sizeof(int));
+    // for (int k = 0; k < reseau_hasse.log_size; k++) {
+    //     est_transitoire[reseau_hasse.links[k].from] = 1;
+    // }
+    // printf("\n--- Analyse des Distributions Stationnaires par Classe ---\n");
+    //
+    // // Boucle sur chaque classe de la partition
+    // for (int i = 0; i < partition.nb_classes; i++) {
+    //     printf("\n>> Classe C%d : ", i + 1);
+    //     if (est_transitoire[i]) {
+    //         printf("TRANSITOIRE.\n");
+    //         printf("   -> La probabilité limite tend vers 0.\n");
+    //     }
+    //     else {
+    //         printf("PERSISTANTE.\n");
+    //
+    //         //Etape 2
+    //         t_matrix M_sub = subMatrix(M_globale, partition, i);
+    //         t_matrix M_prev = creer_matrice(M_sub.lignes, M_sub.cols);
+    //         copier_matrice(&M_prev, M_sub);
+    //         t_matrix M_curr;
+    //
+    //         float diff = 1.0;
+    //         float epsilon = 0.0001; // Seuil de convergence
+    //         int iter = 0;
+    //         int max_iter = 1000; // Limite pour éviter boucle infinie
+    //         int convergence_atteinte = 0;
+    //
+    //         while (iter < max_iter) {
+    //             M_curr = multiplier_matrices(M_prev, M_sub);
+    //             diff = difference_matrices(M_curr, M_prev);
+    //
+    //             liberer_matrice(M_prev);
+    //             M_prev = M_curr;
+    //             iter++;
+    //
+    //             if (diff < epsilon) {
+    //                 convergence_atteinte = 1;
+    //                 break;
+    //             }
+    //         }
+    //         if (convergence_atteinte) {
+    //             printf("   -> Convergence atteinte en %d iterations (diff = %f).\n", iter, diff);
+    //             printf("   -> Matrice stationnaire de la classe :\n");
+    //             afficher_matrice(M_prev);}
+    //         else {
+    //             //Etape 3
+    //             printf("   -> Pas de convergence simple (Diff = %f apres %d iters).\n", diff, max_iter);
+    //             printf("   -> Analyse de PERIODICITE (Bonus)...\n");
+    //             int periode = getPeriod(M_sub);
+    //
+    //             if (periode > 1) {
+    //                 printf("   -> La classe est PERIODIQUE de periode d = %d.\n", periode);
+    //                 printf("   -> Pas de distribution limite unique, mais une distribution cyclique.\n");
+    //             } else {
+    //                 printf("   -> Convergence complexe ou très lente.\n");}
+    //         }
+    //         liberer_matrice(M_sub);
+    //         liberer_matrice(M_prev);
+    //     }
+    // }
+    // free(est_transitoire);
+    // liberer_matrice(M_globale);
+    // free(partition.classes);
+    // if(reseau_hasse.links)
+    //     free(reseau_hasse.links);
+    // return 0;
 }
