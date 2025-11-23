@@ -22,4 +22,6 @@ t_link_array creer_reseau_hasse(ListeAdjacence *g, t_partition *p);
 void afficher_hasse(t_link_array *r);
 void afficher_caracteristiques(t_partition *p, t_link_array *r);
 
+void removeTransitiveLinks(t_link_array *p_link_array);
+
 #endif
