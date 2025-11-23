@@ -26,12 +26,13 @@ int main() {
     // sinon fscanf ne lit pas les "0.25" de ton fichier texte.
 
     // 2. FORCER le terminal Windows à afficher en UTF-8 (page de code 65001)
-    #ifdef _WIN32
+#ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
-    #endif
+#endif
 
 
     // pour remonter d'un dossier (../) pour trouver "data/exemple1.txt"
+    // Tu peux changer ce fichier pour tester les autres (exemple_valid_step3.txt, exemple1.txt, etc.)
     const char *fichier_graphe = "../data/exemple_valid_step3.txt";
 
     //Pour créer le fichier de sortie dans le dossier parent (../)
@@ -72,56 +73,97 @@ int main() {
 
     // Code exécution Partie 3
 
-    // printf("\n=== PARTIE 3 : CALCULS MATRICIELS ===\n");
-    //
-    // //conversion Graphe -> Matrice
-    // t_matrix M = graphe_vers_matrice(graphe);
-    // printf("Matrice de transition M (initiale) :\n");
-    // afficher_matrice(M);
-    //
-    // // validation M^3
-    // t_matrix M2 = multiplier_matrices(M, M); // M^2
-    // t_matrix M3 = multiplier_matrices(M2, M); // M^3
-    // printf("\nMatrice M^3 (Probabilites apres 3 etapes) :\n");
-    // afficher_matrice(M3);
-    //
-    // //Convergence vers l'état stationnaire
-    // printf("\n--- Test de convergence (Distribution stationnaire) ---\n");
-    //
-    // t_matrix M_prev = creer_matrice(M.lignes, M.cols);
-    // copier_matrice(&M_prev, M);
-    // t_matrix M_curr;
-    //
-    // int n = 1;
-    // float epsilon = 0.0001;
-    // float diff = 1.0;
-    // int max_iter = 100; // eviter boucle infinie
-    //
-    // while (diff > epsilon && n < max_iter) {
-    //     M_curr = multiplier_matrices(M_prev, M);
-    //     diff = difference_matrices(M_curr, M_prev);
-    //
-    //     liberer_matrice(M_prev);
-    //     M_prev = M_curr;
-    //     n++;
-    // }
-    //
-    // if (n >= max_iter) {
-    //     printf("Arrêt : Convergence non atteinte apres %d iterations (diff = %f)\n", max_iter, diff);
-    // } else {
-    //     printf("Convergence atteinte a n = %d (diff = %f)\n", n, diff);
-    //     printf("Matrice stationnaire limite :\n");
-    //     afficher_matrice(M_prev);
-    // }
-    //
-    // liberer_matrice(M);
-    // liberer_matrice(M2);
-    // liberer_matrice(M3);
-    // liberer_matrice(M_prev);
-    //
-    // free(partition.classes);
-    // free(reseau_hasse.links);
+    printf("\n=== PARTIE 3 : CALCULS MATRICIELS & PROPRIETES ===\n");
 
+    // 1. Conversion Graphe -> Matrice globale (pour avoir les données)
+    t_matrix M_globale = graphe_vers_matrice(graphe);
+    // printf("Matrice de transition M (globale) :\n");
+    // afficher_matrice(M_globale);
+
+    // 2. Identification des classes transitoires via le graphe de Hasse
+    // On crée un tableau pour marquer les classes : 0 = Persistante, 1 = Transitoire
+    int *est_transitoire = (int*)calloc(partition.nb_classes, sizeof(int));
+
+    // Si une classe est l'origine ("from") d'un lien dans Hasse, elle est transitoire
+    for (int k = 0; k < reseau_hasse.log_size; k++) {
+        est_transitoire[reseau_hasse.links[k].from] = 1;
+    }
+
+    printf("\n--- Analyse des Distributions Stationnaires par Classe ---\n");
+
+    // Boucle sur chaque classe de la partition
+    for (int i = 0; i < partition.nb_classes; i++) {
+        printf("\n>> Classe C%d : ", i + 1);
+
+        if (est_transitoire[i]) {
+            printf("TRANSITOIRE.\n");
+            printf("   -> La probabilité limite tend vers 0.\n");
+        }
+        else {
+            printf("PERSISTANTE.\n");
+
+            // --- Etape 2 (Sujet 3) : Utilisation de subMatrix ---
+            // Extraction de la sous-matrice correspondant uniquement à cette classe
+            t_matrix M_sub = subMatrix(M_globale, partition, i);
+
+            // Tentative de convergence (Puissance itérative)
+            t_matrix M_prev = creer_matrice(M_sub.lignes, M_sub.cols);
+            copier_matrice(&M_prev, M_sub);
+            t_matrix M_curr;
+
+            float diff = 1.0;
+            float epsilon = 0.0001; // Seuil de convergence
+            int iter = 0;
+            int max_iter = 1000; // Limite pour éviter boucle infinie
+            int convergence_atteinte = 0;
+
+            while (iter < max_iter) {
+                M_curr = multiplier_matrices(M_prev, M_sub);
+                diff = difference_matrices(M_curr, M_prev);
+
+                liberer_matrice(M_prev);
+                M_prev = M_curr;
+                iter++;
+
+                if (diff < epsilon) {
+                    convergence_atteinte = 1;
+                    break;
+                }
+            }
+
+            if (convergence_atteinte) {
+                printf("   -> Convergence atteinte en %d iterations (diff = %f).\n", iter, diff);
+                printf("   -> Matrice stationnaire de la classe :\n");
+                afficher_matrice(M_prev);
+            }
+            else {
+                // --- Etape 3 (Bonus) : Analyse de Périodicité ---
+                printf("   -> Pas de convergence simple (Diff = %f apres %d iters).\n", diff, max_iter);
+                printf("   -> Analyse de PERIODICITE (Bonus)...\n");
+
+                int periode = getPeriod(M_sub);
+
+                if (periode > 1) {
+                    printf("   -> La classe est PERIODIQUE de periode d = %d.\n", periode);
+                    printf("   -> Pas de distribution limite unique, mais une distribution cyclique.\n");
+                } else {
+                    printf("   -> Convergence complexe ou très lente.\n");
+                }
+            }
+
+            // Libération de la mémoire spécifique à cette itération
+            liberer_matrice(M_sub);
+            liberer_matrice(M_prev);
+        }
+    }
+
+    // Libération de la mémoire globale
+    free(est_transitoire);
+    liberer_matrice(M_globale);
+
+    // Nettoyage final des structures (optionnel mais propre)
+    free(partition.classes);
+    if(reseau_hasse.links) free(reseau_hasse.links);
 
     return 0;
 }
