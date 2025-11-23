@@ -23,7 +23,6 @@ int main() {
 
     setlocale(LC_NUMERIC, "C");
     // Cela force le programme à utiliser le POINT (.) pour les décimales
-    // sinon fscanf ne lit pas les "0.25" de ton fichier texte.
 
     // 2. FORCER le terminal Windows à afficher en UTF-8 (page de code 65001)
 #ifdef _WIN32
@@ -32,7 +31,6 @@ int main() {
 
 
     // pour remonter d'un dossier (../) pour trouver "data/exemple1.txt"
-    // Tu peux changer ce fichier pour tester les autres (exemple_valid_step3.txt, exemple1.txt, etc.)
     const char *fichier_graphe = "../data/exemple_valid_step3.txt";
 
     //Pour créer le fichier de sortie dans le dossier parent (../)
@@ -66,8 +64,6 @@ int main() {
     // diagramme de Hasse
     t_link_array reseau_hasse = creer_reseau_hasse(graphe, &partition);
     afficher_hasse(&reseau_hasse);
-
-    // caract (Transitoire/Persistant/Absorbant/Irréductible)
     afficher_caracteristiques(&partition, &reseau_hasse);
 
 
@@ -75,26 +71,19 @@ int main() {
 
     printf("\n=== PARTIE 3 : CALCULS MATRICIELS & PROPRIETES ===\n");
 
-    // 1. Conversion Graphe -> Matrice globale (pour avoir les données)
     t_matrix M_globale = graphe_vers_matrice(graphe);
-    // printf("Matrice de transition M (globale) :\n");
+    //printf("Matrice de transition M (globale) :\n");    //enlever les // pour voir la matrice en 10x10
     // afficher_matrice(M_globale);
 
-    // 2. Identification des classes transitoires via le graphe de Hasse
-    // On crée un tableau pour marquer les classes : 0 = Persistante, 1 = Transitoire
     int *est_transitoire = (int*)calloc(partition.nb_classes, sizeof(int));
-
-    // Si une classe est l'origine ("from") d'un lien dans Hasse, elle est transitoire
     for (int k = 0; k < reseau_hasse.log_size; k++) {
         est_transitoire[reseau_hasse.links[k].from] = 1;
     }
-
     printf("\n--- Analyse des Distributions Stationnaires par Classe ---\n");
 
     // Boucle sur chaque classe de la partition
     for (int i = 0; i < partition.nb_classes; i++) {
         printf("\n>> Classe C%d : ", i + 1);
-
         if (est_transitoire[i]) {
             printf("TRANSITOIRE.\n");
             printf("   -> La probabilité limite tend vers 0.\n");
@@ -102,11 +91,8 @@ int main() {
         else {
             printf("PERSISTANTE.\n");
 
-            // --- Etape 2 (Sujet 3) : Utilisation de subMatrix ---
-            // Extraction de la sous-matrice correspondant uniquement à cette classe
+            //Etape 2
             t_matrix M_sub = subMatrix(M_globale, partition, i);
-
-            // Tentative de convergence (Puissance itérative)
             t_matrix M_prev = creer_matrice(M_sub.lignes, M_sub.cols);
             copier_matrice(&M_prev, M_sub);
             t_matrix M_curr;
@@ -130,40 +116,30 @@ int main() {
                     break;
                 }
             }
-
             if (convergence_atteinte) {
                 printf("   -> Convergence atteinte en %d iterations (diff = %f).\n", iter, diff);
                 printf("   -> Matrice stationnaire de la classe :\n");
-                afficher_matrice(M_prev);
-            }
+                afficher_matrice(M_prev);}
             else {
-                // --- Etape 3 (Bonus) : Analyse de Périodicité ---
+                //Etape 3
                 printf("   -> Pas de convergence simple (Diff = %f apres %d iters).\n", diff, max_iter);
                 printf("   -> Analyse de PERIODICITE (Bonus)...\n");
-
                 int periode = getPeriod(M_sub);
 
                 if (periode > 1) {
                     printf("   -> La classe est PERIODIQUE de periode d = %d.\n", periode);
                     printf("   -> Pas de distribution limite unique, mais une distribution cyclique.\n");
                 } else {
-                    printf("   -> Convergence complexe ou très lente.\n");
-                }
+                    printf("   -> Convergence complexe ou très lente.\n");}
             }
-
-            // Libération de la mémoire spécifique à cette itération
             liberer_matrice(M_sub);
             liberer_matrice(M_prev);
         }
     }
-
-    // Libération de la mémoire globale
     free(est_transitoire);
     liberer_matrice(M_globale);
-
-    // Nettoyage final des structures (optionnel mais propre)
     free(partition.classes);
-    if(reseau_hasse.links) free(reseau_hasse.links);
-
+    if(reseau_hasse.links)
+        free(reseau_hasse.links);
     return 0;
 }
