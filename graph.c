@@ -6,6 +6,7 @@
 
 //Etape 1
 
+//arête entre deux sommets
 Cellule* creerCellule(int arrivee, float proba) {
 
     Cellule* nouvelle = (Cellule*)malloc(sizeof(Cellule));

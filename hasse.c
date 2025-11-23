@@ -95,3 +95,22 @@ void afficher_caracteristiques(t_partition *p, t_link_array *r) {
     }
     free(transitoire);
 }
+
+void removeTransitiveLinks(t_link_array *p_link_array) {
+    int i, j, k;
+    for (i = 0; i < p_link_array->log_size; i++) {
+        for (j = 0; j < p_link_array->log_size; j++) {
+            if (p_link_array->links[i].to == p_link_array->links[j].from) {
+                int a = p_link_array->links[i].from;
+                int c = p_link_array->links[j].to;
+                for (k = 0; k < p_link_array->log_size; k++) {
+                    if (p_link_array->links[k].from == a && p_link_array->links[k].to == c) {
+                        p_link_array->links[k] = p_link_array->links[p_link_array->log_size - 1];
+                        p_link_array->log_size--;
+                        k--;
+                    }
+                }
+            }
+        }
+    }
+}
