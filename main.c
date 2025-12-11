@@ -17,7 +17,7 @@ int main() {
     // Configuration Locale et Console
     // ---------------------------------------------------------------------
     setlocale(LC_ALL, "");
-    setlocale(LC_NUMERIC, "C"); // Force le point pour les décimales
+    setlocale(LC_NUMERIC, "C"); 
 
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
