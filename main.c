@@ -77,15 +77,14 @@ int main() {
             // --- SOUS-MENU : PROJET PROBA ---
             printf("\n--- FICHIERS PROJET PROBA ---\n");
             printf("  1. Matrice Projet (27 etats)\n");
-            // Tu pourras ajouter d'autres fichiers ici plus tard
-            // printf("  2. Autre fichier de test...\n");
+            printf("  2. Matrice Final N-D-T (8 etats)\n"); // AJOUTE ICI
             printf("  0. Retour\n");
             printf("Votre choix : ");
             scanf("%d", &choix_fichier);
 
             switch (choix_fichier) {
                 case 1: fichier_graphe = "../data/matrice_projet.txt"; break;
-                    // case 2: fichier_graphe = "../data/ton_nouveau_fichier.txt"; break;
+                case 2: fichier_graphe = "../data/MatriceFinal_N-D-T.txt"; break; // AJOUTE ICI
                 case 0: mode_projet = -1; break;
                 default: printf("Choix invalide.\n"); mode_projet = -1; break;
             }
@@ -115,25 +114,22 @@ int main() {
     genererFichierMermaid(graphe, fichier_mermaid);
 
     // ---------------------------------------------------------------------
-    // EXPLORATION NUMERIQUE (Adaptée pour fonctionner avec n'importe quelle taille)
+    // EXPLORATION NUMERIQUE
     // ---------------------------------------------------------------------
-    // Cette partie n'est pertinente que pour les graphes de Markov,
-    // mais on la laisse s'exécuter pour voir le comportement même sur les graphes "Info".
 
     printf("\n=== EXPLORATION NUMERIQUE ===\n");
 
     t_matrix P = graphe_vers_matrice(graphe);
-    int taille = graphe->taille; // Utilisation de la taille réelle du graphe
+    int taille = graphe->taille;
 
     // Initialisation vecteur ligne (1 x taille)
     t_matrix Pi = creer_matrice(1, taille);
 
-    // --- CONFIGURATION DEPART ---
-    // On met 1.0 sur l'état 2 (si il existe), sinon sur l'état 1
-    if (taille >= 2) {
-        Pi.data[0][1] = 1.0; // Départ Etat 2
-    } else {
-        Pi.data[0][0] = 1.0; // Départ Etat 1 (si graphe minuscule)
+    // --- CORRECTION DEPART : ON PART DE L'ETAT 1 (T) ---
+    // Index 0 correspond à l'Etat 1.
+    if (taille >= 1) {
+        Pi.data[0][0] = 1.0;
+        printf("Note : Simulation lancee avec depart a l'Etat 1 (Index 0).\n");
     }
 
     int steps_to_show[] = {1, 2, 10, 50};
@@ -177,7 +173,7 @@ int main() {
     afficher_caracteristiques(&partition, &reseau_hasse);
 
     // ---------------------------------------------------------------------
-    // DISTRIBUTIONS STATIONNAIRES
+    // DISTRIBUTIONS STATIONNAIRES (Analyse Limite)
     // ---------------------------------------------------------------------
 
     printf("\n=== DISTRIBUTIONS STATIONNAIRES (Analyse Limite) ===\n");
@@ -225,9 +221,13 @@ int main() {
 
             if (convergence_atteinte) {
                 printf("   -> Convergence atteinte.\n");
-                printf("   -> Vecteur Stationnaire :\n   ");
+                printf("   -> Vecteur Stationnaire :\n");
+
+                // --- AFFICHAGE CORRECT AVEC LES VRAIS NOMS D'ETATS ---
                 for(int c=0; c < M_prev.cols; c++) {
-                    printf("%.4f ", M_prev.data[0][c]);
+                    // On récupère le VRAI numéro du sommet grâce à la partition
+                    int id_reel = partition.classes[i].sommets[c];
+                    printf("      [Etat %d] : %.4f\n", id_reel, M_prev.data[0][c]);
                 }
                 printf("\n");
             }
@@ -255,7 +255,6 @@ int main() {
     }
     if(reseau_hasse.links) free(reseau_hasse.links);
 
-    // Petite pause pour Windows pour ne pas fermer la fenetre direct
     printf("\nAppuyez sur Entree pour quitter...");
     getchar(); getchar();
 
