@@ -55,7 +55,7 @@ t_link_array creer_reseau_hasse(ListeAdjacence *g, t_partition *p) {
 
 void afficher_hasse(t_link_array *r) {
     printf("\n--- Diagramme de Hasse (Format Mermaid) ---\n");
-    printf("Copiez-collez ceci dans https://mermaid.live/ :\n\n");
+    printf("https://mermaid.live/ :\n\n");
     printf("flowchart TD\n"); // Début du graphe Mermaid
 
     if (r->log_size == 0) {
