@@ -176,11 +176,12 @@ void genererFichierMermaid(ListeAdjacence *graphe, const char *nomFichier) {
         printf("Erreur: Impossible d'ouvrir le fichier de sortie Mermaid");
         return;
     }
-
+    fprintf(file, "---\n");
     fprintf(file, "config:\n");
     fprintf(file, "  layout: elk\n");
     fprintf(file, "  theme: neo\n");
     fprintf(file, "  look: neo\n");
+    fprintf(file, "---\n");
     fprintf(file, "flowchart LR\n");
     fprintf(file, "\n");
 
