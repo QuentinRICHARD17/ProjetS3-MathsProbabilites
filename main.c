@@ -96,7 +96,12 @@ int main() {
 
 
     printf("\n>>> Chargement du fichier : %s\n", fichier_graphe);
-
+    if (strstr(fichier_graphe, "MatriceFinal_N-D-T.txt") != NULL) {
+        printf("\n***************************************************\n");
+        printf(" LEGENDE DES ETATS :\n");
+        printf(" 1=T, 2=N, 3=D, 4=A, 5=R, 6=E, 7=S, 8=V\n");
+        printf("***************************************************\n");
+    }
     // ---------------------------------------------------------------------
     // PARTIE 1 : Chargement
     // ---------------------------------------------------------------------
